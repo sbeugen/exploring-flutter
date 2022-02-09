@@ -4,16 +4,17 @@ import 'package:pokemon_test_app/components/list_drawer.dart';
 import 'package:pokemon_test_app/pages/caught_pokemon_page.dart';
 import 'package:pokemon_test_app/pages/random_pokemon_page.dart';
 import 'package:pokemon_test_app/persistence/pokemon_database_connector.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  var pokemonDatabaseConnector = PokemonDatabaseConnector();
+  var pokemonDatabaseConnector = !kIsWeb ? PokemonDatabaseConnector() : null;
 
   runApp(MyApp(pokemonDatabaseConnector: pokemonDatabaseConnector));
 }
 
 class MyApp extends StatefulWidget {
-  final PokemonDatabaseConnector pokemonDatabaseConnector;
+  final PokemonDatabaseConnector? pokemonDatabaseConnector;
 
   const MyApp({Key? key, required this.pokemonDatabaseConnector})
       : super(key: key);
@@ -36,14 +37,14 @@ class _MyAppState extends State<MyApp> {
     super.initState();
 
     widget.pokemonDatabaseConnector
-        .getAllPokemon()
+        ?.getAllPokemon()
         .then((caughtPokemon) => setState(() {
               _caughtPokemon = caughtPokemon;
             }));
   }
 
   void _addToCaughtPokemon(Pokemon pokemon) {
-    widget.pokemonDatabaseConnector.insertPokemon(pokemon);
+    widget.pokemonDatabaseConnector?.insertPokemon(pokemon);
 
     setState(() {
       _caughtPokemon = [..._caughtPokemon, pokemon];
